@@ -5,7 +5,7 @@ import { pipe, switchMap, tap } from 'rxjs';
 import { patchState } from '@ngrx/signals';
 import { computed } from '@angular/core';
 import { IProduct } from '../models/product.model';
-import { ProductService } from '../services/product';
+import { Product } from '../services/product';
 
 // 1. L'état initial
 interface ProductState {
@@ -43,7 +43,7 @@ export const ProductStore = signalStore(
   })),
 
   // Les méthodes
-  withMethods((store, productService = inject(ProductService)) => ({
+  withMethods((store, productService : Product= inject(Product)) => ({
 
     // Charger tous les produits
     loadProducts: rxMethod<void>(
