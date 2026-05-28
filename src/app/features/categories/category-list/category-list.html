@@ -1,0 +1,32 @@
+<div class="space-y-6">
+
+  <!-- En-tête -->
+  <h1 class="text-2xl font-bold text-gray-900">Catégories</h1>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="flex justify-center py-12">
+      <div class="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
+
+  <!-- Erreur -->
+  @if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Liste catégories -->
+  @if (categories().length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (category of categories(); track category.slug) {
+        <a [routerLink]="['/products']" class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md hover:border-primary-200 transition-all">
+          <h2 class="font-semibold text-gray-900 capitalize">{{ category.name }}</h2>
+          <p class="text-sm text-primary-600 mt-1">{{ category.slug }}</p>
+        </a>
+      }
+    </div>
+  }
+
+</div>

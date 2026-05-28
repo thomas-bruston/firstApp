@@ -5,7 +5,7 @@ export interface IProduct{
     price : number;
     rating : number;
     stock : number;
-    category : number;
+    category : string;
     thumbnail : string;
 }
 

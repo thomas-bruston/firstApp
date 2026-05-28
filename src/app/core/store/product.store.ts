@@ -4,8 +4,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { patchState } from '@ngrx/signals';
 import { computed } from '@angular/core';
-import { IProduct } from '../models/product.model';
-import { ProductService } from '../services/product';
+import { IProduct,IProductUpdate } from '../models/product.model';
+import { Product } from '../services/product';
 
 // 1. L'état initial
 interface ProductState {
@@ -43,7 +43,7 @@ export const ProductStore = signalStore(
   })),
 
   // Les méthodes
-  withMethods((store, productService = inject(ProductService)) => ({
+  withMethods((store, productService = inject(Product)) => ({
 
     // Charger tous les produits
     loadProducts: rxMethod<void>(
@@ -108,6 +108,29 @@ export const ProductStore = signalStore(
         )
       )
     ),
+    // Modifier un produit
+    updateProduct: rxMethod<IProductUpdate>(
+      pipe(
+        tap(() => patchState(store, { loading: true, error: null })),
+        switchMap((product) =>
+          productService.update(product.id, product).pipe(
+            tap({
+              next: (updatedProduct) => patchState(store, {
+                products: store.products().map(p =>
+                  p.id === updatedProduct.id ? updatedProduct : p
+                ),
+                selectedProduct: updatedProduct,
+                loading: false
+              }),
+              error: (error) => patchState(store, {
+                error: error.message,
+                loading: false
+              })
+            })
+          )
+        )
+      )
+),
 
     // Supprimer un produit
     deleteProduct: rxMethod<number>(
