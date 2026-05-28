@@ -4,10 +4,9 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { patchState } from '@ngrx/signals';
 import { computed } from '@angular/core';
-import { IProduct,IProductUpdate } from '../models/product.model';
+import { IProduct, IProductUpdate } from '../models/product.model';
 import { Product } from '../services/product';
 
-// 1. L'état initial
 interface ProductState {
   products: IProduct[];
   selectedProduct: IProduct | null;
@@ -28,24 +27,19 @@ const initialState: ProductState = {
   limit: 10
 };
 
-// 2. Le store
 export const ProductStore = signalStore(
   { providedIn: 'root' },
 
-  // L'état
   withState(initialState),
 
-  // Valeurs calculées
   withComputed((store) => ({
     totalPages: computed(() => Math.ceil(store.total() / store.limit())),
     skip: computed(() => (store.currentPage() - 1) * store.limit()),
     hasProducts: computed(() => store.products().length > 0),
   })),
 
-  // Les méthodes
   withMethods((store, productService = inject(Product)) => ({
 
-    // Charger tous les produits
     loadProducts: rxMethod<void>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
@@ -67,7 +61,6 @@ export const ProductStore = signalStore(
       )
     ),
 
-    // Charger un produit par id
     loadById: rxMethod<number>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
@@ -88,7 +81,6 @@ export const ProductStore = signalStore(
       )
     ),
 
-    // Créer un produit
     createProduct: rxMethod<IProduct>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
@@ -108,7 +100,7 @@ export const ProductStore = signalStore(
         )
       )
     ),
-    // Modifier un produit
+
     updateProduct: rxMethod<IProductUpdate>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
@@ -130,9 +122,8 @@ export const ProductStore = signalStore(
           )
         )
       )
-),
+    ),
 
-    // Supprimer un produit
     deleteProduct: rxMethod<number>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
@@ -153,7 +144,6 @@ export const ProductStore = signalStore(
       )
     ),
 
-    // Changer de page
     setPage(page: number): void {
       patchState(store, { currentPage: page });
     }
